@@ -86,13 +86,10 @@ def config_model(char_to_id, tag_to_id):
 def evaluate(sess, model, name, data, id_to_tag, logger):
     logger.info("evaluate:{}".format(name))
     ner_results = model.evaluate(sess, data, id_to_tag)
-    print("ner_results-------------",ner_results)
     eval_lines = test_ner(ner_results, FLAGS.result_path)
-    print("eval_lines-------------", eval_lines)
     for line in eval_lines:
         logger.info(line)
     f1 = float(eval_lines[1].strip().split()[-1])
-    print("f1-------------", f1)
     if name == "dev":
         best_test_f1 = model.best_dev_f1.eval()
         if f1 > best_test_f1:
@@ -101,7 +98,6 @@ def evaluate(sess, model, name, data, id_to_tag, logger):
         return f1 > best_test_f1
     elif name == "test":
         best_test_f1 = model.best_test_f1.eval()
-        print("best_test_f1-------------", best_test_f1)
         if f1 > best_test_f1:
             tf.assign(model.best_test_f1, f1).eval()
             logger.info("new best test f1 score:{:>.3f}".format(f1))
@@ -135,8 +131,6 @@ def train():
 
         # Create a dictionary and a mapping for tags
         _t, tag_to_id, id_to_tag = tag_mapping(train_sentences)
-        #with open('maps.txt','w',encoding='utf8') as f1:
-            #f1.writelines(str(char_to_id)+" "+id_to_char+" "+str(tag_to_id)+" "+id_to_tag+'\n')
         with open(FLAGS.map_file, "wb") as f:
             pickle.dump([char_to_id, id_to_char, tag_to_id, id_to_tag], f)
     else:
@@ -192,10 +186,8 @@ def train():
                             iteration, step%steps_per_epoch, steps_per_epoch, np.mean(loss)))
                         loss = []
 
-               # best = evaluate(sess, model, "dev", dev_manager, id_to_tag, logger)
                 if i%7 == 0:
                     save_model(sess, model, FLAGS.ckpt_path, logger)
-            #evaluate(sess, model, "test", test_manager, id_to_tag, logger)
 
 
 def evaluate_line():
@@ -209,16 +201,9 @@ def evaluate_line():
     with tf.Session(config=tf_config) as sess:
         model = create_model(sess, Model, FLAGS.ckpt_path, load_word2vec, config, id_to_char, logger)
         while True:
-            # try:
-            #     line = input("请输入测试句子:")
-            #     result = model.evaluate_line(sess, input_from_line(line, char_to_id), id_to_tag)
-            #     print(result)
-            # except Exception as e:
-            #     logger.info(e)
-
-                line = input("请输入测试句子:")
-                result = model.evaluate_line(sess, input_from_line(line, char_to_id), id_to_tag)
-                print(result)
+            line = input("请输入测试句子:")
+            result = model.evaluate_line(sess, input_from_line(line, char_to_id), id_to_tag)
+            print(result)
 
 
 def main(_):
@@ -244,6 +229,7 @@ def main(_):
             sess.run(tf.global_variables_initializer())
             model = create_model(sess, Model, FLAGS.ckpt_path, load_word2vec, config, id_to_char, logger)
             evaluate(sess,model,"test",test_manager,id_to_tag,logger)
+        # 下面使用命令行输入的方式来进行评估
         # evaluate_line()
 
 if __name__ == "__main__":
