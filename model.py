@@ -131,8 +131,6 @@ class Model(object):
         :param config: wither use segmentation feature
         :return: [1, num_steps, embedding size], 
         """
-        #高:3 血:22 糖:23 和:24 高:3 血:22 压:25 char_inputs=[3,22,23,24,3,22,25]
-        #高血糖 和 高血压 seg_inputs 高血糖=[1,2,3] 和=[0] 高血压=[1,2,3]  seg_inputs=[1,2,3,0,1,2,3]
         embedding = []
         self.char_inputs_test = char_inputs
         self.seg_inputs_test = seg_inputs
