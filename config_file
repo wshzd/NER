@@ -6,7 +6,7 @@
     "seg_dim": 20,
     "lstm_dim": 100,
     "batch_size": 60.0,
-    "emb_file": "C:\\Users\\hezhidong\\PycharmProjects\\test\\58\\generateModelFeature\\data\\vec.txt",
+    "emb_file": "vec.txt",
     "clip": 5.0,
     "dropout_keep": 0.5,
     "optimizer": "adam",
